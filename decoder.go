@@ -14,6 +14,7 @@ type Decoder struct {
 	header     map[string]int
 	keyCheck   []string
 	trimSpaces bool
+	delimiter  rune
 }
 
 type CsvMarshal interface {
@@ -21,11 +22,17 @@ type CsvMarshal interface {
 }
 
 func New() *Decoder {
-	return &Decoder{}
+	return &Decoder{delimiter: ','}
 }
 
-func (d *Decoder) TrimSpaces(b bool) {
+func (d *Decoder) TrimSpaces(b bool) *Decoder {
 	d.trimSpaces = b
+	return d
+}
+
+func (d *Decoder) Delimiter(comma rune) *Decoder {
+	d.delimiter = comma
+	return d
 }
 
 func (d *Decoder) WithHeader(header []string) *Decoder {
@@ -105,6 +112,7 @@ func (d *Decoder) UnMarshal(reader *csv.Reader, bean interface{}) error {
 
 func (d *Decoder) UnMarshalBytes(body []byte, bean interface{}) error {
 	csvReader := csv.NewReader(bytes.NewReader(body))
+	csvReader.Comma = d.delimiter
 	return d.UnMarshal(csvReader, bean)
 }
 
@@ -116,6 +124,7 @@ func (d *Decoder) UnMarshalFile(path string, bean interface{}) error {
 	}
 	defer csvFile.Close()
 	csvReader := csv.NewReader(csvFile)
+	csvReader.Comma = d.delimiter
 	return d.UnMarshal(csvReader, bean)
 }
 
