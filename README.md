@@ -10,7 +10,7 @@ csv reader is a simple decoder for decoding csv file to struct
 
 # install
 ```
-go get github.com/zhnxin/csvreader
+go get github.com/Digman/csvreader
 ```
 
 # usage

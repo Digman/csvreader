@@ -11,8 +11,9 @@ import (
 )
 
 type Decoder struct {
-	header   map[string]int
-	keyCheck []string
+	header     map[string]int
+	keyCheck   []string
+	trimSpaces bool
 }
 
 type CsvMarshal interface {
@@ -23,9 +24,16 @@ func New() *Decoder {
 	return &Decoder{}
 }
 
+func (d *Decoder) TrimSpaces(b bool) {
+	d.trimSpaces = b
+}
+
 func (d *Decoder) WithHeader(header []string) *Decoder {
 	d.header = make(map[string]int)
 	for i, h := range header {
+		if d.trimSpaces {
+			h = strings.TrimSpace(h)
+		}
 		d.header[h] = i
 	}
 	return d
@@ -142,6 +150,9 @@ func (d *Decoder) unMarshal(row []string, beanT reflect.Type) (beanR reflect.Val
 		}
 		if ok {
 			value = row[index]
+			if d.trimSpaces {
+				value = strings.TrimSpace(value)
+			}
 			if fileV.Kind() == reflect.Ptr {
 				fileV.Set(reflect.New(fileV.Type().Elem()))
 				fileV = fileV.Elem()

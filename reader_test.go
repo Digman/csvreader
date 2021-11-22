@@ -3,9 +3,8 @@ package csvreader_test
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/Digman/csvreader"
 	"testing"
-
-	"github.com/zhnxin/csvreader"
 )
 
 type testStruct struct {
